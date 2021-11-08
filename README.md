@@ -102,16 +102,16 @@ this report.
   |IPIS (Integrated Property Information System)                                                       |NYC OpenData; Dataset is no longer available from NYC OpenData but archived version is available from QRI at <https://qri.cloud/nyc-open-data-archive/ipis-integrated-property-information-system>|
   |FacDB (Facilities Database)                                                                         |NYC Department of City Planning; <https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-selfac.page>|
   |Heat Vulnerability Index for NYC - 2018                                                             |NYC Department of Health and Mental Hygiene; data available at <https://a816-dohbesp.nyc.gov/IndicatorPublic/VisualizationData.aspx?id=2411,719b87,107,Map,Score,2018>|
+  |NYC Parks Forever Wild Area Boundaries                                                              |NYC Open Data; https://data.cityofnewyork.us/Environment/NYC-Parks-Forever-Wild/48va-85tp |
   |Street Tree Census - 1995-1996                                                                      |NYC OpenData; <https://data.cityofnewyork.us/Environment/1995-Street-Tree-Census/tn4g-ski5>|
   |Street Tree Census - 2005-2006                                                                      |NYC OpenData; <https://data.cityofnewyork.us/Environment/2005-Street-Tree-Census/29bw-z7pj>|
   |Street Tree Census - 2015-2016                                                                      |NYC OpenData; <https://data.cityofnewyork.us/Environment/2015-Street-Tree-Census-Tree-Data/pi5s-9p35>|
   |Tree Canopy Change -- 2010-2017                                                                     |NYC OpenData; <https://data.cityofnewyork.us/Environment/Tree-Canopy-Change-2010-2017-/by9k-vhck>|
-  |NYC Parks Golf Course Dataset                                                                       |NYC Department of Parks and Recreation|
-  |NYC Parks Dominant Type Dataset                                                                     |NYC Department of Parks and Recreation|
-  |NYC Parks Park Tree Inventory for Landscaped Park Areas of City Parkland                            |NYC Department of Parks and Recreation|
-  |Street Tree Capacity Estimates                                                                      |NYC Department of Parks and Recreation|
-  |NYC Parks Forever Wild Area Boundaries                                                              |NYC Open Data; https://data.cityofnewyork.us/Environment/NYC-Parks-Forever-Wild/48va-85tp |
-  |Social Vulnerability Index - 2018                                                                   |US Centers for Disease Control and Prevention; <https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html>|
+  |NYC Parks Dominant Type Dataset                                                                     |NYC Department of Parks and Recreation; Dominant Type, 2020|
+  |NYC Parks Golf Course Boundaries                                                                    |NYC Department of Parks and Recreation; Golf Courses, 2020|
+  |NYC Parks Park Tree Inventory for Landscaped Park Areas of City Parkland                            |NYC Department of Parks and Recreation; Park Tree Inventory, 2018|
+  |Street Tree Capacity Estimates                                                                      |NYC Department of Parks and Recreation; Street Tree Capacity, 2017|
+  |Social Vulnerability Index - 2018                                                                   |Centers for Disease Control and Prevention/ Agency for Toxic Substances and Disease Registry/ Geospatial Research, Analysis, and Services Program. CDC/ATSDR Social Vulnerability Index, 2018 Database, New York. <https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html.>|
   |HOLC (Home Owners' Loan Corporation) Boundaries and Grades                                          |University of Richmond, Digital Scholarship Lab; Nelson, R.K., Winling, L., Marciano, R., Connolly, N. et al. Mapping inequality. American Panorama, ed. Nelson, R.K., and Ayers, E.L. Available:  https://dsl.richmond.edu/panorama/redlining/ |
   |Gateway National Recreation Area Boundaries                                                         |National Park Service|
   |ECM (Ecological Covertype Map)                                                                      |The Natural Areas Conservancy|
@@ -186,7 +186,7 @@ many cases we are not able to accurately discern granular ownership or
 jurisdiction such as those of most individual government agencies. These results
 were primarily leveraged for Chapter 2 of the report, but many are referenced
 throughout. R code used to accomplish this re-coding is available in
-[ownership_landuse_recoding.R](./ownership_landuse_recoding.R) (through line 111).
+[ownership_landuse_recoding.R](./ownership_landuse_recoding.R) (lines 59-217).
 
 -   For properties where MapPLUTO.OwnerType was recorded as either City ("C" in MapPLUTO)
     or Mixed ("M" in MapPLUTO; mixed City and private ownership), we classified these as City-owned.
@@ -201,7 +201,7 @@ throughout. R code used to accomplish this re-coding is available in
 
 -   For a suite of properties where owner name was listed in MapPLUTO as
     federal entities (e.g., U.S. Post Office), we classified these
-    properties as Federally-owned. (see lines 53-62 in [ownership_landuse_recoding.R](R/ownership_landuse_recoding.R).)
+    properties as Federally-owned).
 
 -   We leveraged other datasets to supplement MapPLUTO. Where these
     overlapped MapPLUTO, they were given priority over MapPLUTO as they
@@ -285,9 +285,10 @@ from MapPLUTO as provided, with the following exceptions:
     owning or managing entity (e.g., NYC Parks properties were all
     considered City Parkland).
 
-Relevant R code used to accomplish this re-coding of land use information is
-available in [ownership_landuse_recoding.R](./ownership_landuse_recoding.R)
-(lines 120-167)
+Relevant R code used to accomplish this re-coding of land use information, as
+well to delineate classes listed below (Colleges/Universities, Schools,
+Hospitals, and Natural vs Developed areas) is available in
+[ownership_landuse_recoding.R](./ownership_landuse_recoding.R) (starting at Line 220).
 
 #### Colleges/Universities, Schools, and Hospitals
 
@@ -301,8 +302,7 @@ public schools to be any properties for which the Facility Subgroup
 the mashup based on the borough, block, and lot number (BBL). Similarly, we
 identified hospitals (for analysis in Chapter 4) in NYC based on the Facilities
 Database, where FacDB.FACTYPE was coded as "Hospital" again, joining the data to
-the mashup based on the BBL. Supporting code for this is available in
-[FILL IN EQUITY ANALYSIS CODE]
+the mashup based on the BBL.
 
 #### Select Special Purpose Districts
 
@@ -341,7 +341,7 @@ borough boundaries since the time the ECM was created. These areas
 generally fell in suburban areas in far Queens (along the boundary with
 Nassau County) and the Bronx (along the boundary with Westchester
 County). Based on our observations of the data, considered these areas
-as non-natural areas.
+as non-natural areas in analyses and aggregations of data.
 
 Analysis of Canopy Distribution and Canopy Change (Chapter 2)
 -------------------------------------------------------------

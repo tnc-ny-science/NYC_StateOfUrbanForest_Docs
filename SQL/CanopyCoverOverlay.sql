@@ -1,5 +1,11 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---Generic/Template code for canopy cover and chanopy change analysis; See below for example
+--Generic/Template code for canopy cover and chanopy change analysis; See below for two examples.
+--
+-- Example 1 is fairly general (canopy change analysis by borough)
+-- Example 2 illustrates multiple steps - developing buffers of NYC Neighborhood Tabulation Areas (by 1/4 mile), clipped
+--  to borough boundaries, setting up spatial indexes, and then doing the canopy change analysis for those units.
+--  Example 2 results were used for in analyses presented in Chapter 4 of the report.
+
 --
 --  The query below is designed to take canopy change data layer (representing gain, loss, or no change polygons)
 --  and another polygon layer that one wants canopy change metrics for (e.g., borough boundaries), and output a 
@@ -29,9 +35,8 @@
 --    [schemaname].[tablename]
  --    USING GIST(geom_2263);
 
-
-
-
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Heuristic example
 -- Define output table
 create table results_utc_landcover.canopyvector_outtable as 
     --Set up common table expression (CTE); calculate, for every area with a unique identifier based on infield in overlay layer
@@ -96,7 +101,7 @@ SET work_mem='2097151';
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Example assuming borough boundaries data are in schema 'admin' and table 'boroughs_nowater'
+-- Example 1, assuming borough boundaries data are in schema 'admin' and table 'boroughs_nowater'
 create table results_utc_landcover.canopyvector_outtable as 
     --Set up common table expression (CTE); calculate, for every area with a unique identifier based on infield in overlay layer
     -- the sum of area of gain, loss, and no change 
@@ -137,3 +142,85 @@ create table results_utc_landcover.canopyvector_outtable as
     group by
     su.boroname,
     su.geom_2263;
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--Example 2, canopy cahnge for NYC Neighborhood Tabulation Areas + 1/4 mile buffer (Clipped to Boroughs)
+-- Used in Equity correlation analyses
+--summary unit table name: sonyct_misc.nycnta_qtr_mi_buff
+--summary unit group by field: ntacode
+--results table name: results_utc_landcover.canopyvector_nycnta_qtr_mi_buff
+
+
+-- Code sets up buffer of NTAs, clipped to boroughs
+create table sonyct_misc.nycnta_qtr_mi_buff as 
+select nna.ntacode, nna.ntaname, st_union(st_multi(st_intersection(st_buffer(nna.geom_2263, 1320), nbna.geom_2263))) as geom_2263 
+from admin.nycdcp_nycnta2010 nna
+join admin.nycdcp_borough_nowater nbna 
+on st_intersects(nna.geom_2263, nbna.geom_2263)
+group by nna.ntacode, nna.ntaname;
+
+--Geometry type is specified for the column
+alter table sonyct_misc.nycnta_qtr_mi_buff
+ALTER COLUMN geom_2263 TYPE geometry(MultiPolygon,2263) 
+                        USING ST_SetSRID(geom_2263,2263)
+
+--primary key is set
+alter table sonyct_misc.nycnta_qtr_mi_buff
+add pgid serial primary key;
+
+--spatial index is created
+create index nycnta_qtr_mi_buffgeom_idx on sonyct_misc.nycnta_qtr_mi_buff
+using gist(geom_2263);
+
+-- set things up to run across multiple CPU cores and with ~2GB per core
+set max_parallel_workers = 8;
+set max_parallel_workers_per_gather=6;
+show max_parallel_workers_per_gather;
+SET work_mem='2097151';
+
+--Run Query to calculate canopy metrics by NTA+1/4 mile (clipped to land)
+create table results_utc_landcover.canopyvector_nycnta_qtr_mi_buff as 
+with cte as (
+select
+	ntacode,
+	ntaname,
+	sum(st_area(geom_2263)) as cliparea,
+	class
+from
+	(select cc.class,
+		su.ntacode,
+		su.ntaname,
+		case when st_CoveredBy(cc.geom_2263, su.geom_2263) then cc.geom_2263
+		else st_multi(ST_Intersection(cc.geom_2263, su.geom_2263))
+		end as geom_2263
+	from
+		env_assets.canopychange_2010_2017 as cc
+		inner join sonyct_misc.nycnta_qtr_mi_buff as su on (st_Intersects(cc.geom_2263, su.geom_2263))) as foo
+	group by
+	ntacode,
+	ntaname,
+	class)
+select
+	su.ntacode,
+	su.ntaname,
+	su.geom_2263,
+	round(st_area(su.geom_2263)::numeric, 2) as unit_ft2,
+	round(sum(case when cte.class = 'Gain' then cte.cliparea else 0 end)::numeric, 2) as gain_ft2,
+	round(sum(case when cte.class = 'No Change' then cte.cliparea else 0 end)::numeric, 2) as nochange_ft2,
+	round(sum(case when cte.class = 'Loss' then cte.cliparea else 0 end)::numeric, 2) as loss_ft2,
+	round(sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end)::numeric, 2) as canopy_2010_ft2,
+	round(sum(case when cte.class = 'No Change' or cte.class = 'Gain' then cte.cliparea else 0 end)::numeric, 2) as canopy_2017_ft2,
+	round(((sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end)/ st_area(su.geom_2263))* 100)::numeric, 2) as canopy_2010_pct,
+	round(((sum(case when cte.class = 'No Change' or cte.class = 'Gain' then cte.cliparea else 0 end)/ st_area(su.geom_2263))* 100)::numeric, 2) as canopy_2017_pct,
+	round(((sum(case when cte.class = 'No Change' or cte.class = 'Gain' then cte.cliparea else 0 end)) - (sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end)))::numeric, 2) as canopy_17min10_ft2,
+	round((((sum(case when cte.class = 'No Change' or cte.class = 'Gain' then cte.cliparea else 0 end)/ st_area(su.geom_2263))* 100) - ((sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end)/ st_area(su.geom_2263))* 100))::numeric, 2) as canopy_17min10_pct,
+	round((case when sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end)>0 then (((sum(case when cte.class = 'No Change' or cte.class = 'Gain' then cte.cliparea else 0 end)) - (sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end)))/(sum(case when cte.class = 'No Change' or cte.class = 'Loss' then cte.cliparea else 0 end))) else 0 end)::numeric, 2) as canopy_17min10_div10
+from sonyct_misc.nycnta_qtr_mi_buff as su
+left join cte 
+on su.ntacode = cte.ntacode
+group by
+su.ntacode,
+su.ntaname,
+su.geom_2263;

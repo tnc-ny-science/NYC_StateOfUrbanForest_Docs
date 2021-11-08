@@ -6,17 +6,23 @@
 ## The coordinate reference system for all data imported via this code is gets defined as EPSG 2263 before import
 ## into the database, regardless of the source data. 
 ##
-## Things these functions do: 1) Load data into R; 2) ensure data are projected to EPSG 2263; 3) lowercase column names [makes sql queries easier]
-## 4) defines geometry colun name to 'geom_2263'; 5) writes data to database; 6) defines geometry type for the column in postgres; 
-## 7) adds primary key; 8) creates spatial index.
+## Things these functions generally do: 1) Load data into R; 2) ensure data are projected to EPSG 2263; 
+## 3) lowercase column names [makes sql queries easier] (sets as multi-type geometries); 4) defines 
+## geometry colum name to 'geom_2263'; 5) writes data to database; 6) defines geometry type for the column in postgres; 
+## 7) adds primary key; 8) creates spatial index.  There are some exceptions are on a function-specific basis.
 ##
-## The functions can be modified to accommodate different types of formats.
+## The functions can be modified to accommodate different types of formats and geometry types.
 ##
 ## Code developed by Mike Treglia, The Nature Conservancy (michael.treglia@tnc.org)
 
-
+# The following are required for these to work.
 library(sf)
 library(RPostgres)
+importFrom(magrittr,"%>%") 
+
+# An opportunity to improve the below functions is avoid loading libraries at the beginning
+# and explicitly call functions from packages (e.g., sf::st_read(...), or RPostgres::dbSendQuery(...))
+
 # Function to load polygon data into PostGIS from vector path (e.g., shapefile, geojson)
 vectorpathpoly2postgis <- function(path, schema, lyrname){
   x <- st_read(paste(path)) %>% st_transform(crs=2263) 
@@ -143,3 +149,65 @@ xycsvpnt2postgis <- function(path, xcoord, ycoord, crs, schema, lyrname){
                         , sep=""))
   print("layer successfully written")
 }
+
+# Function to load point data from r sf object into PostGIS
+robjpnt2postgis <- function(robj, crs, schema, lyrname){
+  x <- st_transform(robj, crs=2263) 
+  names(x) <- tolower(names(x))
+  names(x)[which(names(x) %in% c("geometry", "geom", "shape"))] = "geom_2263"
+  st_geometry(x) <- "geom_2263"  
+  st_write(x, dsn=con, Id(schema=schema,table=lyrname))
+  dbSendQuery(con, paste("ALTER TABLE ",  schema, ".", lyrname, 
+                         " ALTER COLUMN geom_2263 TYPE geometry(POINT,2263) 
+                        USING ST_SetSRID(geom_2263,2263);"
+                         ,sep=""))
+  dbSendQuery(con, paste("ALTER TABLE ", schema, ".", lyrname,
+                         " ADD pgid serial PRIMARY KEY;"
+                         ,sep=""))
+  dbSendQuery(con, paste("CREATE INDEX ", lyrname, "geom_idx",
+                         " ON ", schema, ".", lyrname,
+                         " USING GIST (geom_2263);"
+                         , sep=""))
+  print("layer successfully written")
+}
+
+# Function to load polygon data from r sf object into PostGIS
+robjpoly2postgis <- function(robj, crs, schema, lyrname){
+  x <- st_transform(robj, crs=2263) 
+  names(x) <- tolower(names(x))
+  names(x)[which(names(x) %in% c("geometry", "geom", "shape"))] = "geom_2263"
+  st_geometry(x) <- "geom_2263"  
+  st_write(x, dsn=con, Id(schema=schema,table=lyrname))
+  dbSendQuery(con, paste("ALTER TABLE ",  schema, ".", lyrname, 
+                         " ALTER COLUMN geom_2263 TYPE geometry(MULTIPOLYGON,2263) 
+                        USING ST_SetSRID(geom_2263,2263);"
+                         ,sep=""))
+  dbSendQuery(con, paste("ALTER TABLE ", schema, ".", lyrname,
+                         " ADD pgid serial PRIMARY KEY;"
+                         ,sep=""))
+  dbSendQuery(con, paste("CREATE INDEX ", lyrname, "geom_idx",
+                         " ON ", schema, ".", lyrname,
+                         " USING GIST (geom_2263);"
+                         , sep=""))
+  print("layer successfully written")
+}
+
+# Function to load line data from r sf object into PostGIS
+robjline2postgis <- function(robj, crs, schema, lyrname){
+  x <- st_transform(robj, crs=2263) 
+  names(x) <- tolower(names(x))
+  names(x)[which(names(x) %in% c("geometry", "geom", "shape"))] = "geom_2263"
+  st_geometry(x) <- "geom_2263"  
+  st_write(x, dsn=con, Id(schema=schema,table=lyrname))
+  dbSendQuery(con, paste("ALTER TABLE ",  schema, ".", lyrname, 
+                         " ALTER COLUMN geom_2263 TYPE geometry(MULTILINESTRING,2263) 
+                        USING ST_SetSRID(geom_2263,2263);"
+                         ,sep=""))
+  dbSendQuery(con, paste("ALTER TABLE ", schema, ".", lyrname,
+                         " ADD pgid serial PRIMARY KEY;"
+                         ,sep=""))
+  dbSendQuery(con, paste("CREATE INDEX ", lyrname, "geom_idx",
+                         " ON ", schema, ".", lyrname,
+                         " USING GIST (geom_2263);"
+                         , sep=""))
+  print("layer successfully written")
