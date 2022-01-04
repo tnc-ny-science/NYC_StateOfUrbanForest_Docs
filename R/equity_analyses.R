@@ -26,7 +26,11 @@ library(dplyr)
 library(Hmisc)
 library(RPostgres)
 
-### load RPostgres package and connect to database
+### Load RPostgres package and connect to database. Note - users may need to
+### adjust or add information for the connection based on their system and settings
+### (e.g., users may adjust the database name and user name, add password
+### information [which should not be stored within code as good practice], and the
+### port)
 con <- dbConnect(RPostgres::Postgres(), user='postgres', host='localhost', dbname="nyc_urbanforest")
 
 ######### Begin code related to correlations of urban forest and socioeconomic variables #########
