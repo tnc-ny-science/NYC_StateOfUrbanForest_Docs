@@ -3,7 +3,7 @@
 [Click here to jump to the Table of Contents](#table-of-contents)
 
 This repository is intended to document analyses conducted in development of
-*The State of the Urban Forest in New York City*. This is seeen as an expanded
+*The State of the Urban Forest in New York City*. This is seen as an expanded
 version of **Appendix 1** in the report; the same methods are summarized, but
 supported with relevant code and in cases additional details. The report is
 available online at
@@ -15,7 +15,7 @@ and supplemental results files are available at
 and organization. Thanks for your patience!*
 
 This work is Copyright The Nature Conservancy, and all materials are provided
-as-is, without warranty. The [License](./License.md) file applies to code in
+as-is, without warranty. The [License](./License) file applies to code in
 this repository. All other materials are made available under a Creative Commons
 Attribution-NonCommercial-ShareAlike License as set forth in our Conservation
 Gateway Terms of Use (available at:
@@ -25,26 +25,26 @@ If using these materials, please reference the report (per this recommended
 citation): 
 Treglia, M.L., Acosta-Morel, M., Crabtree, D., Galbo, K., Lin-Moges,
 T., Van Slooten, A., and Maxwell, E.N. (2021). *The State of the Urban Forest in
-New York City*. The Nature Conservancy. doi: 10.5281/zenodo.5532876
+New York City*. The Nature Conservancy. doi: [10.5281/zenodo.5532876](https://doi.org/10.5281/zenodo.5532876)
 
 Navigate this page by scrolling, or using the Table of Contents, below.
 
 ## Table of Contents
   * [README](#readme)
-- [The State of the Urban Forest in New York City: Online Methods Supplement](#the-state-of-the-urban-forest-in-new-york-city--online-methods-supplement)
+- [The State of the Urban Forest in New York City: Online Methods Supplement](#the-state-of-the-urban-forest-in-new-york-city-online-methods-supplement)
   * [General Notes and Data Used in Analyses](#general-notes-and-data-used-in-analyses)
   * [Breakdown of Site Types](#breakdown-of-site-types)
     + [Land Ownership and Jurisdiction](#land-ownership-and-jurisdiction)
     + [Land Use](#land-use)
-      - [Colleges/Universities, Schools, and Hospitals](#colleges-universities--schools--and-hospitals)
+      - [Colleges/Universities, Schools, and Hospitals](#collegesuniversities-schools-and-hospitals)
       - [Select Special Purpose Districts](#select-special-purpose-districts)
     + [Delineation of Natural Areas](#delineation-of-natural-areas)
-  * [Analysis of Canopy Distribution and Canopy Change (Chapter 2)](#analysis-of-canopy-distribution-and-canopy-change--chapter-2-)
-  * [Analysis of Street Trees (Chapter 2)](#analysis-of-street-trees--chapter-2-)
-    + [Distribution, Size, and Common Species by Geography](#distribution--size--and-common-species-by-geography)
+  * [Analysis of Canopy Distribution and Canopy Change (Chapter 2)](#analysis-of-canopy-distribution-and-canopy-change-chapter-2)
+  * [Analysis of Street Trees (Chapter 2)](#analysis-of-street-trees-chapter-2)
+    + [Distribution, Size, and Common Species by Geography](#distribution-size-and-common-species-by-geography)
     + [Stocking Rate and Density per Road Mile](#stocking-rate-and-density-per-road-mile)
-  * [Analysis of Landscaped Park Trees in City Parkland (Chapter 2)](#analysis-of-landscaped-park-trees-in-city-parkland--chapter-2-)
-  * [Analysis of Equity of the NYC Urban Forest (Chapter 4)](#analysis-of-equity-of-the-nyc-urban-forest--chapter-4-)
+  * [Analysis of Landscaped Park Trees in City Parkland (Chapter 2)](#analysis-of-landscaped-park-trees-in-city-parkland-chapter-2)
+  * [Analysis of Equity of the NYC Urban Forest (Chapter 4)](#analysis-of-equity-of-the-nyc-urban-forest-chapter-4)
     + [Urban Forest and Socioeconomic Metrics](#urban-forest-and-socioeconomic-metrics)
     + [Canopy around Schools and Hospitals](#canopy-around-schools-and-hospitals)
     + [Canopy and HOLC Grades (Redlining)](#canopy-and-holc-grades--redlining-)
@@ -55,8 +55,7 @@ Navigate this page by scrolling, or using the Table of Contents, below.
 
 
 
-The State of the Urban Forest in New York City: Online Methods Supplement
-=========================================
+# The State of the Urban Forest in New York City: Online Methods Supplement
 
 
 General Notes and Data Used in Analyses
@@ -90,9 +89,9 @@ were not leveraged for this report, and we may not have been able to
 leverage more recent datasets if released during the later stages of
 this report.
 
-***Table Table 1. Data Sources used in Analysis in this Report.***
+***Table 1. Data Sources used in Analysis in the Report.***
   
-  |**Dataset\***                                                                                       |**Source\***|
+  |**Dataset\***                                                                                       |**Source\*\***|
   |----------------------------------------------------------------------------------------------------| -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
   |MapPLUTO - version 20v6 (Tax lot boundaries)                                                        |NYC Department of City Planning; <https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page>|
   |Borough Boundaries (Clipped to Shoreline)                                                           |NYC Department of City Planning; <https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page>|
@@ -113,11 +112,11 @@ this report.
   |NYC Parks Golf Course Boundaries                                                                    |NYC Department of Parks and Recreation; Golf Courses, 2020|
   |NYC Parks Park Tree Inventory for Landscaped Park Areas of City Parkland                            |NYC Department of Parks and Recreation; Park Tree Inventory, 2018|
   |Street Tree Capacity Estimates                                                                      |NYC Department of Parks and Recreation; Street Tree Capacity, 2017|
-  |Social Vulnerability Index - 2018                                                                   |Centers for Disease Control and Prevention/ Agency for Toxic Substances and Disease Registry/ Geospatial Research, Analysis, and Services Program. CDC/ATSDR Social Vulnerability Index, 2018 Database, New York. <https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html.>|
+  |Social Vulnerability Index - 2018                                                                   |Centers for Disease Control and Prevention/ Agency for Toxic Substances and Disease Registry/ Geospatial Research, Analysis, and Services Program. CDC/ATSDR Social Vulnerability Index, 2018 Database, New York. <https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html>|
   |HOLC (Home Owners' Loan Corporation) Boundaries and Grades                                          |University of Richmond, Digital Scholarship Lab; Nelson, R.K., Winling, L., Marciano, R., Connolly, N. et al. Mapping inequality. American Panorama, ed. Nelson, R.K., and Ayers, E.L. Available:  https://dsl.richmond.edu/panorama/redlining/ |
   |Gateway National Recreation Area Boundaries                                                         |National Park Service|
-  |ECM (Ecological Covertype Map)                                                                      |The Natural Areas Conservancy|
-  |NYC Housing Authority Properties                                                                    |NYC Housing Authority|
+  |ECM (Ecological Covertype Map)                                                                      |The Natural Areas Conservancy;  O’Neil-Dunne, J., MacFaden, S., Forgione, H., & Lu, J. (2014). Urban ecological land-cover mapping for New York City. Final Report. Spatial Informatics Group, University of Vermont, Natural Areas Conservancy, NYC Department of Parks and Recreation.|
+  |NYC Housing Authority Properties                                                                    |NYC Housing Authority; Full boundary data available at <https://data.cityofnewyork.us/Housing-Development/Map-of-NYCHA-Developments/i9rv-hdr5>|
   |NYS State-Owned Parcels                                                                             |NYS GIS Clearinghouse; <http://gis.ny.gov/gisdata/inventories/details.cfm?DSID=1300>|
   |NYS Department of Environmental Conservation Lands (DEC Lands)                                      |NYS GIS Clearinghouse; <https://gis.ny.gov/gisdata/inventories/details.cfm?DSID=1114>|
   |NYS Historic Sites and Park Boundary (NYS Office of Parks, Recreation, and Historic Preservation)   |NYS GIS Clearinghouse; <https://gis.ny.gov/gisdata/inventories/details.cfm?DSID=430>|
@@ -188,7 +187,7 @@ many cases we are not able to accurately discern granular ownership or
 jurisdiction such as those of most individual government agencies. These results
 were primarily leveraged for Chapter 2 of the report, but many are referenced
 throughout. R code used to accomplish this re-coding is available in
-[ownership_landuse_recoding.R](./ownership_landuse_recoding.R) (lines 59-217).
+[R/ownership_landuse_recoding.R](R/ownership_landuse_recoding.R) (lines 59-217).
 
 -   For properties where MapPLUTO.OwnerType was recorded as either City ("C" in MapPLUTO)
     or Mixed ("M" in MapPLUTO; mixed City and private ownership), we classified these as City-owned.
@@ -290,7 +289,7 @@ from MapPLUTO as provided, with the following exceptions:
 Relevant R code used to accomplish this re-coding of land use information, as
 well to delineate classes listed below (Colleges/Universities, Schools,
 Hospitals, and Natural vs Developed areas) is available in
-[ownership_landuse_recoding.R](./ownership_landuse_recoding.R) (starting at Line 220).
+[R/ownership_landuse_recoding.R](R/ownership_landuse_recoding.R) (starting at Line 220).
 
 #### Colleges/Universities, Schools, and Hospitals
 
