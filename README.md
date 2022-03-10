@@ -3,16 +3,20 @@
 [Click here to jump to the Table of Contents](#table-of-contents)
 
 This repository is intended to document analyses conducted in development of
-*The State of the Urban Forest in New York City*. This is seen as an expanded
-version of **Appendix 1** in the report; the same methods are summarized, but
-supported with relevant code and in cases additional details. The report is
-available online at
+[*The State of the Urban Forest in New York City*](https://www.nature.org/content/dam/tnc/nature/en/photos/TheStateoftheNYCUrbanForest.pdf).
+This is seen as an expanded version of **Appendix 1** in the report; the same
+methods are summarized, but supported with relevant code and in cases additional
+details. The report is available online at
 [https://doi.org/10.5281/zenodo.5532876](https://doi.org/10.5281/zenodo.5532876)
 and supplemental results files are available at
 [https://doi.org/10.5281/zenodo.5210261](https://doi.org/10.5281/zenodo.5210261).
 
-*Note, this repository is undergoing completion, along with some updates for formatting, readabiilty,
-and organization. Thanks for your patience!*
+*Note, content may be added through time to support users working with data
+relevant to the NYC urban forest, especially those used in the report. For
+example, see
+[this Quick Reference Sheet](/NYC_OpenDataWeek_2022/NYC_UrbanForestryData_QuickReference.md)
+about some notable datasets, developed as part of a
+[NYC Open Data Week 2022 event, Understanding the Urban Forest in NYC through Open Data](https://2022.open-data.nyc/event/understanding-the-urban-forest-in-nyc-through-open-data/).*
 
 This work is Copyright The Nature Conservancy, and all materials are provided
 as-is, without warranty. The [License](./License) file applies to code in
